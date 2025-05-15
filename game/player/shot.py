@@ -1,5 +1,5 @@
 import pygame
-from circleshape import CircleShape
+from game.circleshape import CircleShape
 
 class Shot(CircleShape):
     SHOT_RADIUS = 5

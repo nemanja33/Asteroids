@@ -1,9 +1,10 @@
 import pygame
-from constants import *
-from player import Player
-from asteroid import Asteroid
-from asteroidfield import AsteroidField
-from shot import Shot
+from config.constants import *
+from game.player.player import Player
+from game.asteroids.asteroid import Asteroid
+from game.asteroids.asteroidfield import AsteroidField
+from game.player.score import Score
+from game.player.shot import Shot
 
 def main():
     # player
@@ -51,6 +52,9 @@ def main():
 
         # screen fill
         screen.fill("black")
+
+        # score
+        score = Score(screen)
 
         # player
         for item in drawable:
