@@ -21,7 +21,10 @@ class BaseShape(pygame.sprite.Sprite):
         # sub-classes must override
         pass
 
-    def collision(self, BaseShape):
-        distance = self.position.distance_to(BaseShape.position)
+    def collision(self, shape):
+        is_triangle = hasattr(self, "point_in_triangle")
+        if is_triangle and self.point_in_triangle(shape.position, self.triangle()):
+            return True
 
-        return distance <= self.radius + BaseShape.radius
+        distance = self.position.distance_to(shape.position)
+        return distance <= self.radius + shape.radius
