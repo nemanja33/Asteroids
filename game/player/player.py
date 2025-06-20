@@ -1,4 +1,6 @@
 import pygame
+import math
+from game.player.shield import Shield
 from game.weapons.base_gun import BaseGun
 from game.Miscellaneous.BaseShape.baseshape import BaseShape
 from config.constants import *
@@ -8,23 +10,17 @@ class Player(BaseShape):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.timer = 0
-        self.score = 0
         self.lives = 2
         self.accelerate = 1
         self.running = False
         self.gun = BASE_GUN
-
-    def set_lives(self):
-        self.lives -= 1
+        self.shield = Shield()
 
     def get_lives(self):
         return self.lives
 
-    def set_score(self, value):
-        self.score += value
-
-    def get_score(self):
-        return self.score
+    def reduce_lives(self):
+        self.lives -= 1
     
     def set_gun(self, gun):
         self.gun = gun
@@ -47,7 +43,20 @@ class Player(BaseShape):
         return [a, b, c]
 
     def draw(self, screen):
-        pygame.draw.polygon(screen, "white", self.triangle(), 2)
+        triangle_points = self.triangle()
+
+        surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+
+        if self.shield.get_cd() > 0:
+            t = pygame.time.get_ticks()
+            flicker = int((math.sin(t * 0.02) + 1) / 2 * 255)
+            color = (255, 255, 255, flicker)
+        else:
+            color = (255, 255, 255, 255)
+
+        pygame.draw.polygon(surface, color, triangle_points, 2)
+
+        screen.blit(surface, (0, 0))
 
     def rotate(self, dt):
         self.rotation += PLAYER_TURN_SPEED * dt
@@ -57,6 +66,9 @@ class Player(BaseShape):
         self.position += forward * PLAYER_SPEED * dt * self.accelerate
 
     def update(self, dt):
+        if self.shield.get_cd() > 0:
+            self.shield.decrease_cd(dt, 1000)
+
         keys = pygame.key.get_pressed()
 
         # Shooting

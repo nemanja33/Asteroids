@@ -1,3 +1,4 @@
+from game.player.score import Score
 from game.weapons.weapon import Weapon
 import pygame
 import os
@@ -40,6 +41,9 @@ def main():
 
     # explosions
     explosion_group = pygame.sprite.Group()
+    
+    # init score
+    score = Score()
 
     # game loop
     while (True):
@@ -59,8 +63,15 @@ def main():
         # detect collision
         for asteroid in asteroids_group:
             if new_player.collision(asteroid):
-                new_player.set_lives()
-                new_player.re_spawn()
+                shield = new_player.shield.get_shield()
+                if (shield > 0):
+                    if new_player.shield.get_cd() <= 0:
+                        new_player.shield.decrease_shield(1)
+                        new_player.shield.increse_cd(2000)
+                else:
+                    if new_player.shield.get_cd() <= 0:
+                        new_player.reduce_lives()
+                        new_player.re_spawn()
                 if (new_player.get_lives() < 0):
                     print("Game over!")
                     exit()
@@ -71,22 +82,25 @@ def main():
                     explosion_group.add(explosion)
                     bullet.kill()
                     asteroid.split(bullet.dmg)
-                    new_player.set_score(10)
+                    score.set_score(10)
 
 # ipak razdvoji u klsae i tako setuj dmg
-                    if new_player.get_score() > 100:
+                    if score.get_score() > 100:
                         new_player.set_gun(DOUBLE_GUN)
 
-                    if new_player.get_score() > 300:
+                    if score.get_score() > 300:
                         new_player.set_gun(TRIPLE_GUN)
 
-        # score text
-        score_text = font.render("Score {0}".format(new_player.get_score()), 1, "white")
+        score_text = font.render("Score {0}".format(score.get_score()), 1, "white")
         screen.blit(score_text, (5, 10))
 
         # lives text
         lives_text = font.render("Lives {0}".format(new_player.get_lives()), 1, "white")
         screen.blit(lives_text, (5, 30))
+
+        # shield text
+        shield_text = font.render("Shield {0}".format(new_player.shield.get_shield()), 1, "white")
+        screen.blit(shield_text, (5, 50))
 
         # player
         for item in drawable:
