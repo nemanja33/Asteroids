@@ -1,6 +1,6 @@
 class Shield():
     def __init__(self):
-        self.amount = 2
+        self.amount = 0
         self.cd = 0
         
     def get_shield(self):

@@ -11,3 +11,6 @@ class Weapon(BaseShape):
 
     def draw(self, screen):
         pass
+    
+    def shoot(self, r):
+        pass

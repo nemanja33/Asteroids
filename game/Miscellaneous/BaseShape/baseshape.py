@@ -22,8 +22,8 @@ class BaseShape(pygame.sprite.Sprite):
         pass
 
     def collision(self, shape):
-        is_triangle = hasattr(self, "point_in_triangle")
-        if is_triangle and self.point_in_triangle(shape.position, self.triangle()):
+        is_triangle = hasattr(self, "triangle_collision")
+        if is_triangle and self.triangle_collision(shape.position, self.triangle()):
             return True
 
         distance = self.position.distance_to(shape.position)

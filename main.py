@@ -1,4 +1,6 @@
 from game.player.score import Score
+from game.weapons.double_gun import DoubleGun
+from game.weapons.triple_gun import TripleGun
 from game.weapons.weapon import Weapon
 import pygame
 import os
@@ -84,12 +86,11 @@ def main():
                     asteroid.split(bullet.dmg)
                     score.set_score(10)
 
-# ipak razdvoji u klsae i tako setuj dmg
                     if score.get_score() > 100:
-                        new_player.set_gun(DOUBLE_GUN)
+                        new_player.set_gun(DoubleGun)
 
                     if score.get_score() > 300:
-                        new_player.set_gun(TRIPLE_GUN)
+                        new_player.set_gun(TripleGun)
 
         score_text = font.render("Score {0}".format(score.get_score()), 1, "white")
         screen.blit(score_text, (5, 10))
