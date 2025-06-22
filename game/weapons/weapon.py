@@ -1,4 +1,4 @@
-from game.BaseShape.baseshape import BaseShape
+from game.base_shape.base_shape import BaseShape
 
 class Weapon(BaseShape):
     SHOT_RADIUS = 5

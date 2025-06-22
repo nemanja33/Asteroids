@@ -8,7 +8,7 @@ from config.constants import *
 from game.player.player import Player
 from game.asteroids.asteroid import Asteroid
 from game.asteroids.asteroidfield import AsteroidField
-from game.Explosion.explosion import Explosion
+from game.explosion.explosion import Explosion
 
 def main():
     # font
