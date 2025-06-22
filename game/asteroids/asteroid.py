@@ -1,7 +1,7 @@
 import pygame
 import random
 import math
-from game.Miscellaneous.BaseShape.baseshape import BaseShape
+from game.BaseShape.baseshape import BaseShape
 from config.constants import ASTEROID_MIN_RADIUS
 
 class Asteroid(BaseShape):

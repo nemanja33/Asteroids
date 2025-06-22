@@ -1,14 +1,14 @@
+import pygame
+import os
 from game.player.score import Score
 from game.weapons.double_gun import DoubleGun
 from game.weapons.triple_gun import TripleGun
 from game.weapons.weapon import Weapon
-import pygame
-import os
 from config.constants import *
 from game.player.player import Player
 from game.asteroids.asteroid import Asteroid
 from game.asteroids.asteroidfield import AsteroidField
-from game.Miscellaneous.Explosion.explosion import Explosion
+from game.Explosion.explosion import Explosion
 
 def main():
     # font
@@ -28,7 +28,7 @@ def main():
     clock = pygame.time.Clock()
     dt = 0
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    bg_image_path = os.path.join("game", "Miscellaneous", "bg.jpg")
+    bg_image_path = os.path.join("game", "bg.jpg")
     bg_image = pygame.transform.scale(pygame.image.load(bg_image_path), (SCREEN_WIDTH, SCREEN_HEIGHT))
 
     # asteroids

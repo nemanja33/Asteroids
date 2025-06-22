@@ -2,7 +2,7 @@ import pygame
 import math
 from game.player.shield import Shield
 from game.weapons.base_gun import BaseGun
-from game.Miscellaneous.BaseShape.baseshape import BaseShape
+from game.BaseShape.baseshape import BaseShape
 from config.constants import *
 
 class Player(BaseShape):
