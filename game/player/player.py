@@ -12,6 +12,7 @@ class Player(BaseShape):
         self.lives = 2
         self.shoot_timer = 0
         self.accelerate = 1
+        self.respawn_cd = 0
         self.gun = BaseGun
         self.shield = Shield()
 
@@ -27,16 +28,25 @@ class Player(BaseShape):
     def get_gun(self):
         return self.gun
 
-    def re_spawn(self):
+    def respawn(self):
         self.position = pygame.Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
         self.accelerate = 1
-
+        
+    def get_cd(self):
+        return self.respawn_cd
+    
+    def increse_cd(self, x):
+        self.respawn_cd = x
+    
+    def decrease_cd(self, dt, x):
+        self.respawn_cd -= dt * x
+        
     def draw(self, screen):
         triangle_points = self.triangle()
 
         surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
 
-        if self.shield.get_cd() > 0:
+        if self.get_cd() > 0:
             t = pygame.time.get_ticks()
             flicker = int((math.sin(t * 0.02) + 1) / 2 * 255)
             color = (255, 255, 255, flicker)
@@ -55,8 +65,8 @@ class Player(BaseShape):
         self.position += forward * PLAYER_SPEED * dt * self.accelerate
 
     def update(self, dt):
-        if self.shield.get_cd() > 0:
-            self.shield.decrease_cd(dt, 1000)
+        if self.get_cd() > 0:
+            self.decrease_cd(dt, 1000)
 
         keys = pygame.key.get_pressed()
 

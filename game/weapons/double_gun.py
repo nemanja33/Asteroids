@@ -6,6 +6,7 @@ import pygame
 class DoubleGun(Weapon):
     def __init__(self, x, y):
         super().__init__(x, y)
+        self.dmg = 20
 
     def shoot(self, rotation):
         forward = pygame.Vector2(0, 1).rotate(rotation)

@@ -1,6 +1,8 @@
 import pygame
 import os
+from random import randint
 from game.player.score import Score
+from game.player.shield import Shield
 from game.weapons.double_gun import DoubleGun
 from game.weapons.triple_gun import TripleGun
 from game.weapons.weapon import Weapon
@@ -11,108 +13,120 @@ from game.asteroids.asteroidfield import AsteroidField
 from game.explosion.explosion import Explosion
 
 def main():
-    # font
-    pygame.font.init()
+    # init data
+    pygame.init()
     font = pygame.font.SysFont("freesansbold.ttf", 16)
+    clock = pygame.time.Clock()
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    bg_image = pygame.transform.scale(pygame.image.load(os.path.join("game", "bg.jpg")), (SCREEN_WIDTH, SCREEN_HEIGHT))
 
-    # player
-    x = SCREEN_WIDTH / 2
-    y = SCREEN_HEIGHT / 2
+    # player info
+    x, y = SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     Player.containers = (updatable, drawable)
     new_player = Player(x, y)
 
-    # game
-    pygame.init()
-    clock = pygame.time.Clock()
-    dt = 0
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    bg_image_path = os.path.join("game", "bg.jpg")
-    bg_image = pygame.transform.scale(pygame.image.load(bg_image_path), (SCREEN_WIDTH, SCREEN_HEIGHT))
-
     # asteroids
     asteroids_group = pygame.sprite.Group()
     Asteroid.containers = (asteroids_group, updatable, drawable)
-    AsteroidField.containers = (updatable)
+    AsteroidField.containers = (updatable,)
     AsteroidField()
 
-    # shots
+    # weapon
     shots_group = pygame.sprite.Group()
     Weapon.containers = (shots_group, updatable, drawable)
 
-    # explosions
+    # explosion
     explosion_group = pygame.sprite.Group()
-    
-    # init score
     score = Score()
 
-    # game loop
-    while (True):
+    # shield
+    SHIELD_EVENT = pygame.USEREVENT + 1
+    shield_group = pygame.sprite.Group()
+
+    def start_shield_timer():
+        pygame.time.set_timer(SHIELD_EVENT, randint(2000, 10000))
+
+    if not shield_group:
+        start_shield_timer()
+
+    running = True
+    while running:
+        dt = clock.tick(60) / 1000
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return
+                running = False
 
+            if event.type == SHIELD_EVENT and not shield_group:
+                shield = Shield()
+                shield_group.add(shield)
+                pygame.time.set_timer(SHIELD_EVENT, randint(2000, 10000))
+
+        # update data
         updatable.update(dt)
-
-        # screen fill
-        screen.blit(bg_image, (0, 0))
-
-        # explosions
-        explosion_group.draw(screen)
         explosion_group.update()
+        shield_group.update(dt)
 
-        # detect collision
+        # show images and sprites
+        screen.blit(bg_image, (0, 0))
+        explosion_group.draw(screen)
+        shield_group.draw(screen)
+
+        # player data
+        player_shield = new_player.shield.get_shield()
+        player_lives = new_player.get_lives()
+        player_respawn_cd = new_player.get_cd()
+
+        # asteroid collision
         for asteroid in asteroids_group:
             if new_player.collision(asteroid):
-                shield = new_player.shield.get_shield()
-                if (shield > 0):
-                    if new_player.shield.get_cd() <= 0:
+                if player_respawn_cd <= 0:
+                    new_player.increse_cd(2000)
+                    if (player_shield > 0):
                         new_player.shield.decrease_shield(1)
-                        new_player.shield.increse_cd(2000)
-                else:
-                    if new_player.shield.get_cd() <= 0:
+                    else:
+                        new_player.respawn()
                         new_player.reduce_lives()
-                        new_player.re_spawn()
-                if (new_player.get_lives() < 0):
-                    print("Game over!")
-                    exit()
 
+                if (player_lives <= 0):
+                    print("Game over!")
+                    running = False
+                
             for bullet in shots_group:
                 if bullet.collision(asteroid):
-                    explosion = Explosion(asteroid.position[0], asteroid.position[1])
-                    explosion_group.add(explosion)
+                    explosion_group.add(Explosion(asteroid.position[0], asteroid.position[1]))
                     bullet.kill()
                     asteroid.split(bullet.dmg)
                     score.set_score(10)
+                    
+        # shield collision
+        for shield in shield_group:
+            if shield.collision(new_player):
+                new_player.shield.increase_shield(1)
+                shield.kill()
 
-                    if score.get_score() > 100:
-                        new_player.set_gun(DoubleGun)
+        # weapon change
+        current_score = score.get_score()
+        if current_score > 300:
+            new_player.set_gun(TripleGun)
+        elif current_score > 100:
+            new_player.set_gun(DoubleGun)
 
-                    if score.get_score() > 300:
-                        new_player.set_gun(TripleGun)
+        # game info
+        score_text = font.render(f"Score {current_score}", True, "white")
+        lives_text = font.render(f"Lives {player_lives}", True, "white")
+        shield_text = font.render(f"Shield {player_shield}", True, "white")
 
-        score_text = font.render("Score {0}".format(score.get_score()), 1, "white")
         screen.blit(score_text, (5, 10))
-
-        # lives text
-        lives_text = font.render("Lives {0}".format(new_player.get_lives()), 1, "white")
         screen.blit(lives_text, (5, 30))
-
-        # shield text
-        shield_text = font.render("Shield {0}".format(new_player.shield.get_shield()), 1, "white")
         screen.blit(shield_text, (5, 50))
 
-        # player
         for item in drawable:
             item.draw(screen)
 
-        # idk
         pygame.display.flip()
-
-        # fps
-        clock.tick(60)
-        dt = clock.tick(60) / 1000
 
 if __name__ == "__main__":
     main()

@@ -1,9 +1,7 @@
 import pygame
 
-# Base class for game objects
 class BaseShape(pygame.sprite.Sprite):
     def __init__(self, x, y, radius):
-        # we will be using this later
         if hasattr(self, "containers"):
             super().__init__(self.containers)
         else:
@@ -14,11 +12,9 @@ class BaseShape(pygame.sprite.Sprite):
         self.radius = radius
 
     def draw(self, screen):
-        # sub-classes must override
         pass
 
     def update(self, dt):
-        # sub-classes must override
         pass
 
     def collision(self, shape):
@@ -27,4 +23,5 @@ class BaseShape(pygame.sprite.Sprite):
             return True
 
         distance = self.position.distance_to(shape.position)
+        
         return distance <= self.radius + shape.radius

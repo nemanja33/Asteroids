@@ -6,6 +6,7 @@ import pygame
 class TripleGun(Weapon):
     def __init__(self, x, y):
         super().__init__(x, y)
+        self.dmg = 20
 
     def shoot(self, rotation):
         angles = [10, 0, -10]
