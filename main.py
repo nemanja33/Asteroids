@@ -3,6 +3,7 @@ import os
 from random import randint
 from game.player.score import Score
 from game.player.shield import Shield
+from game.player.speed_up import SpeedUp
 from game.weapons.double_gun import DoubleGun
 from game.weapons.triple_gun import TripleGun
 from game.weapons.weapon import Weapon
@@ -51,6 +52,16 @@ def main():
     if not shield_group:
         start_shield_timer()
 
+    # speed up
+    SPEED_UP_EVENT = pygame.USEREVENT + 1
+    speed_up_group = pygame.sprite.Group()
+
+    def start_speed_up_timer():
+        pygame.time.set_timer(SPEED_UP_EVENT, randint(2000, 10000))
+
+    if not speed_up_group:
+        start_speed_up_timer()
+
     running = True
     while running:
         dt = clock.tick(60) / 1000
@@ -64,18 +75,25 @@ def main():
                 shield_group.add(shield)
                 pygame.time.set_timer(SHIELD_EVENT, randint(2000, 10000))
 
+            if event.type == SPEED_UP_EVENT and not speed_up_group:
+                speed_up = SpeedUp()
+                speed_up_group.add(speed_up)
+                pygame.time.set_timer(SPEED_UP_EVENT, randint(2000, 10000))
+
         # update data
         updatable.update(dt)
         explosion_group.update()
         shield_group.update(dt)
+        speed_up_group.update(dt)
 
         # show images and sprites
         screen.blit(bg_image, (0, 0))
         explosion_group.draw(screen)
         shield_group.draw(screen)
+        speed_up_group.draw(screen)
 
         # player data
-        player_shield = new_player.shield.get_shield()
+        player_shield = new_player.shield.get_amout()
         player_lives = new_player.get_lives()
         player_respawn_cd = new_player.get_cd()
 
@@ -85,7 +103,7 @@ def main():
                 if player_respawn_cd <= 0:
                     new_player.increse_cd(2000)
                     if (player_shield > 0):
-                        new_player.shield.decrease_shield(1)
+                        new_player.shield.decrease_amount(1)
                     else:
                         new_player.respawn()
                         new_player.reduce_lives()
@@ -104,8 +122,14 @@ def main():
         # shield collision
         for shield in shield_group:
             if shield.collision(new_player):
-                new_player.shield.increase_shield(1)
+                new_player.shield.increase_amount(1)
                 shield.kill()
+
+        # shield collision
+        for speed_up in speed_up_group:
+            if speed_up.collision(new_player):
+                new_player.set_acceleration(1.2)
+                speed_up.kill()
 
         # weapon change
         current_score = score.get_score()

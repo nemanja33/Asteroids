@@ -2,6 +2,7 @@ import pygame
 import math
 from game.base_shape.base_shape import BaseShape
 from game.player.shield import Shield
+from game.player.speed_up import SpeedUp
 from game.weapons.base_gun import BaseGun
 from config.constants import *
 
@@ -13,6 +14,8 @@ class Player(BaseShape):
         self.shoot_timer = 0
         self.accelerate = 1
         self.respawn_cd = 0
+        self.speed_reset_time = 0
+        self.speed_up = SpeedUp()
         self.gun = BaseGun
         self.shield = Shield()
 
@@ -41,6 +44,10 @@ class Player(BaseShape):
     def decrease_cd(self, dt, x):
         self.respawn_cd -= dt * x
         
+    def set_acceleration(self, a):
+        self.speed_reset_time = 5000
+        self.speed_up.increase_amount(a)
+        
     def draw(self, screen):
         triangle_points = self.triangle()
 
@@ -62,11 +69,17 @@ class Player(BaseShape):
 
     def move(self, dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
-        self.position += forward * PLAYER_SPEED * dt * self.accelerate
+        self.position += forward * PLAYER_SPEED * dt * self.accelerate * self.speed_up.get_amout()
 
     def update(self, dt):
         if self.get_cd() > 0:
             self.decrease_cd(dt, 1000)
+        
+        if self.speed_reset_time > 0:
+            self.speed_reset_time -= dt * 1000
+            
+        if self.speed_reset_time <= 0:
+            self.speed_up.set_amount(1)
 
         keys = pygame.key.get_pressed()
 
@@ -95,7 +108,7 @@ class Player(BaseShape):
         if not keys[pygame.K_w] and self.accelerate != 1:
             self.accelerate = 1
 
-        if keys[pygame.K_LSHIFT] and self.accelerate <=2:
+        if keys[pygame.K_LSHIFT] and self.accelerate <= 2:
             self.accelerate += dt
 
         self.shoot_timer -= dt
