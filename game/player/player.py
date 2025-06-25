@@ -95,6 +95,18 @@ class Player(BaseShape):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         self.position += forward * PLAYER_SPEED * dt * self.accelerate * speed_factor
 
+        # Screen wrap
+        screen_width = pygame.display.get_surface().get_width()
+        screen_height = pygame.display.get_surface().get_height()
+        if self.position.x < 0:
+            self.position.x = screen_width
+        elif self.position.x > screen_width:
+            self.position.x = 0
+        if self.position.y < 0:
+            self.position.y = screen_height
+        elif self.position.y > screen_height:
+            self.position.y = 0
+
     def update(self, dt):
         if self.get_respawn_cd() > 0:
             self.decrease_cd(dt, 1000)

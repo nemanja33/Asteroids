@@ -14,7 +14,8 @@ class Bomb(PowerUp):
                 ),
                 (30, 30)
             ),
-            position=pygame.Vector2(x, y),
+            x=x,
+            y=y,
         )
         self.damage = 100
     

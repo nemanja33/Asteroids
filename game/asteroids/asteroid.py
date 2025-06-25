@@ -49,3 +49,11 @@ class Asteroid(BaseShape):
     def update(self, dt):
         self.position += self.velocity * dt
         self.rotation += self.rotation_speed * dt
+        
+        screen_width = pygame.display.get_surface().get_width()
+        screen_height = pygame.display.get_surface().get_height()
+        if (self.position.x < 0 - self.radius * 3
+            or self.position.x > screen_width + self.radius * 3
+            or self.position.y < 0 - self.radius * 3
+            or self.position.y > screen_height + self.radius * 3):
+            self.kill()
