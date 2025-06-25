@@ -1,8 +1,8 @@
 import pygame
 import math
 from game.base_shape.base_shape import BaseShape
-from game.player.shield import Shield
-from game.player.speed_up import SpeedUp
+from game.player.shield.shield import Shield
+from game.player.speed_up.speed_up import SpeedUp
 from game.weapons.base_gun import BaseGun
 from config.constants import *
 
@@ -15,8 +15,8 @@ class Player(BaseShape):
         self.accelerate = 1
         self.respawn_cd = 0
         self.speed_reset_time = 0
-        self.speed_up = SpeedUp()
         self.gun = BaseGun
+        self.speed_up = SpeedUp()
         self.shield = Shield()
 
     def get_lives(self):
@@ -25,24 +25,36 @@ class Player(BaseShape):
     def reduce_lives(self):
         self.lives -= 1
     
-    def set_gun(self, gun):
-        self.gun = gun
-
     def get_gun(self):
         return self.gun
 
-    def respawn(self):
-        self.position = pygame.Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
-        self.accelerate = 1
+    def set_gun(self, gun):
+        self.gun = gun
         
     def get_cd(self):
         return self.respawn_cd
+    
+    def get_shield(self):
+        return self.shield
+    
+    def set_shield(self, shield):
+        self.shield = shield
+        
+    def get_speed_up(self):
+        return self.speed_up
+    
+    def set_speed_up(self, speed_up):
+        self.speed_up = speed_up
     
     def increse_cd(self, x):
         self.respawn_cd = x
     
     def decrease_cd(self, dt, x):
         self.respawn_cd -= dt * x
+
+    def respawn(self):
+        self.position = pygame.Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+        self.accelerate = 1
         
     def set_acceleration(self, a):
         self.speed_reset_time = 5000
@@ -69,7 +81,7 @@ class Player(BaseShape):
 
     def move(self, dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
-        self.position += forward * PLAYER_SPEED * dt * self.accelerate * self.speed_up.get_amout()
+        self.position += forward * PLAYER_SPEED * dt * self.accelerate * self.speed_up.get_amount()
 
     def update(self, dt):
         if self.get_cd() > 0:

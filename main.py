@@ -1,9 +1,9 @@
 import pygame
 import os
 from random import randint
-from game.player.score import Score
-from game.player.shield import Shield
-from game.player.speed_up import SpeedUp
+from game.player.score.score import Score
+from game.player.shield.shield import Shield
+from game.player.speed_up.speed_up import SpeedUp
 from game.weapons.double_gun import DoubleGun
 from game.weapons.triple_gun import TripleGun
 from game.weapons.weapon import Weapon
@@ -93,7 +93,7 @@ def main():
         speed_up_group.draw(screen)
 
         # player data
-        player_shield = new_player.shield.get_amout()
+        player_shield = new_player.shield.get_amount()
         player_lives = new_player.get_lives()
         player_respawn_cd = new_player.get_cd()
 
