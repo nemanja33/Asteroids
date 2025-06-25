@@ -1,5 +1,4 @@
 import pygame
-import os
 
 class PowerUp(pygame.sprite.Sprite):
     def __init__(self, image, x, y , amount, velocity=(0, 200), radius=30):
@@ -21,7 +20,6 @@ class PowerUp(pygame.sprite.Sprite):
         
     def decrease_amount(self, x):
         self.amount -= x
-        
 
     def update(self, dt):
         delta = self.velocity * dt
