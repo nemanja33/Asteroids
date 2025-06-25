@@ -8,7 +8,7 @@ from game.player.speed_up.speed_up import SpeedUp
 from game.weapons.double_gun import DoubleGun
 from game.weapons.triple_gun import TripleGun
 from game.weapons.weapon import Weapon
-from config.constants import *
+from config.constants import SCREEN_HEIGHT, SCREEN_WIDTH, PLAYER_SHOOT_COOLDOWN
 from game.player.player import Player
 from game.asteroids.asteroid import Asteroid
 from game.asteroids.asteroidfield import AsteroidField
@@ -22,11 +22,11 @@ def main():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     bg_image = pygame.transform.scale(
         pygame.image.load(os.path.join("game", "bg.jpg")),
-        (SCREEN_WIDTH, SCREEN_HEIGHT)
+        (pygame.display.get_surface().get_width(), pygame.display.get_surface().get_height())
     )
 
     # player info
-    x, y = SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2
+    x, y = pygame.display.get_surface().get_width() / 2, pygame.display.get_surface().get_height() / 2
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     Player.containers = (updatable, drawable)

@@ -2,7 +2,7 @@ import pygame
 import math
 from game.base_shape.base_shape import BaseShape
 from game.weapons.base_gun import BaseGun
-from config.constants import *
+from config.constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_COOLDOWN, PLAYER_DEFAULT_BOMB_AMOUNT
 
 class Player(BaseShape):
     def __init__(self, x, y):
@@ -61,7 +61,7 @@ class Player(BaseShape):
         self.bomb_amount += 1
 
     def respawn(self):
-        self.position = pygame.Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+        self.position = pygame.Vector2(pygame.display.get_surface().get_width() / 2, pygame.display.get_surface().get_height() / 2)
         self.accelerate = 1
 
     def activate_speed_up(self, duration=5):
@@ -77,7 +77,7 @@ class Player(BaseShape):
     def draw(self, screen):
         self.screen = screen
         triangle_points = self.triangle()
-        surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+        surface = pygame.Surface((pygame.display.get_surface().get_width(), pygame.display.get_surface().get_height()), pygame.SRCALPHA)
         if self.get_respawn_cd() > 0:
             t = pygame.time.get_ticks()
             flicker = int((math.sin(t * 0.02) + 1) / 2 * 255)
@@ -147,6 +147,7 @@ class Player(BaseShape):
             gun.shoot(self.rotation)
             self.shoot_timer = PLAYER_SHOOT_COOLDOWN
 
+    # collision
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         right = pygame.Vector2(0, 1).rotate(self.rotation + 90) * (self.radius / 1.5)

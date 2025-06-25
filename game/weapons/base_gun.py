@@ -1,4 +1,4 @@
-from config.constants import PLAYER_SHOOT_SPEED, SCREEN_HEIGHT, SCREEN_WIDTH
+from config.constants import PLAYER_SHOOT_SPEED
 from game.weapons.weapon import Weapon
 import pygame
 
@@ -12,8 +12,8 @@ class BaseGun(Weapon):
 
     def draw(self, screen):
         pygame.draw.circle(screen, pygame.Color("white"), self.position, self.SHOT_RADIUS, 2)
-        if (self.position[0] > SCREEN_WIDTH + 20
-            or self.position[1] > SCREEN_HEIGHT + 20
+        if (self.position[0] > pygame.display.get_surface().get_width() + 20
+            or self.position[1] > pygame.display.get_surface().get_height() + 20
             or self.position[0] < -10
             or self.position[1] < -10):
             self.kill()

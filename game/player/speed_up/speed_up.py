@@ -16,6 +16,4 @@ class SpeedUp(PowerUp):
             ),
             x=randint(5, pygame.display.get_surface().get_width() - 5),
             y=-15,
-            velocity=(0, 200),
-            radius=30
         )

@@ -1,24 +1,24 @@
 import pygame
 import os
 
-class Bomb(pygame.sprite.Sprite):
+from game.powerup.powerup import PowerUp
+
+class Bomb(PowerUp):
     def __init__(self, x, y):
-        super().__init__()
-        self.velocity = pygame.Vector2(0, 500)
-        self.image = pygame.transform.scale(
-            pygame.image.load(
-                os.path.join(os.path.dirname(__file__), "bomb.png")
+        super().__init__(
+            amount=3,
+            velocity=pygame.Vector2(0, 500),
+            image=pygame.transform.scale(
+                pygame.image.load(
+                    os.path.join(os.path.dirname(__file__), "bomb.png")
+                ),
+                (30, 30)
             ),
-            (30, 30)
+            position=pygame.Vector2(x, y),
         )
-        self.rect = self.image.get_rect(center=(x, y))
         self.damage = 100
-        
-    def get_amount(self):
-        return self.amount
     
     def draw(self, screen):
-        print(self.image, self.rect.center)
         screen.blit(self.image, self.rect.center)
         
     def update(self, dt):
